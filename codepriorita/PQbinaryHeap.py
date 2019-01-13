@@ -18,12 +18,20 @@ class PQbinaryHeap:
             return None     #e' una foglia
         if node.index * 2 + 2 > self.length - 1:
             return self.heap[node.index * 2 + 1]    #ha un solo figlio
-        if self.heap[node.index * 2 + 1].key < \
-                self.heap[node.index * 2 + 2].key:
+        if self.heap[node.index * 2 + 1].key <  self.heap[node.index * 2 + 2].key:
            return self.heap[node.index * 2 + 1]
         else:
             return self.heap[node.index * 2 + 2]
-
+    def maxSon(self, nodeId):
+        """Ricerca del figlio di chiave massima"""
+        if nodeId * 2 + 1 > self.length - 1:
+            return self.heap.pop(nodeId) # e' una foglia
+        if nodeId * 2 + 2 > self.length - 1:
+            return self.heap.pop(nodeId * 2 + 1)  # ha un solo figlio
+        if self.heap[node.index * 2 + 1].key < self.heap[nodeId * 2 + 2].key:
+            return self.heap.pop(nodeId * 2 + 1)
+        else:
+            return self.heap.pop(nodeId * 2 + 2)
     def swap(self, node1, node2):
         self.heap[node1.index] = node2
         self.heap[node2.index] = node1

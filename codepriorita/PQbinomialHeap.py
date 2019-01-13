@@ -156,11 +156,36 @@ class PQbinomialHeap:
                 minKeyIndex = i
         return minKeyIndex
 
+    def findMaxIndex(self):
+        """Restituisce l'indice dell'heap la cui radice ha chiave massima."""
+        maxKeyIndex = -1  # valore di default per indicare errore
+        if self.isEmpty():
+            return maxKeyIndex
+
+        # Trova la posizione del primo heap non vuoto.
+        startIndex = 0
+        for i in range(PQbinomialHeap.MAXSIZE):
+            if self.heap[i][0] != None:
+                startIndex = maxKeyIndex = i
+                break
+
+        # Trova l'indice del heap con radice a chiave minima.
+        for i in range(startIndex + 1, PQbinomialHeap.MAXSIZE):
+            if self.heap[i][0] != None and \
+                            self.heap[i][0].root.key < self.heap[maxKeyIndex][0].root.key:
+                maxKeyIndex = i
+        return maxKeyIndex
     def findMin(self):
         """Restituisce la radice dell'heap con chiave minima."""
         if self.isEmpty():
             return None
         return self.heap[self.findMinIndex()][0].root.elem
+
+    def findMax(self):
+        """Restituisce la radice dell'heap con chiave minima."""
+        if self.isEmpty():
+            return self.heap.pop()
+        return self.heap.pop(self.findMaxIndex())
 
     def deleteMin(self):
 

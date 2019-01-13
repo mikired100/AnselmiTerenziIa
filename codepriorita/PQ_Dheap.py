@@ -36,6 +36,21 @@ class PQ_DHeap:
                 minSon = son
         return minSon
 
+    def maxSon(self, nodeId):
+        maxSon = None
+        maxKey = float('inf')  # qualsiasi elemento avra' valore inferiore
+        for s in range(1, self.d + 1):  # iterazione sui figli del nodo
+            sindex = self.d * nodeId + s  # indice del figlio s-esimo
+            if sindex > self.length - 1:  # fuori dal limite della lista
+                break  # return minSon
+            son = self.heap[sindex]
+            if son.key > maxKey:
+                maxKey = son.key
+                maxSon = son
+        if maxSon !=None:
+         return(self.heap.pop(maxSon))
+        else:
+         return self.heap.pop()
     def swap(self, node1, node2):
         self.heap[node1.index] = node2
         self.heap[node2.index] = node1
@@ -59,6 +74,7 @@ class PQ_DHeap:
         if self.length == 0:
             return True
         return False
+
 
     def findMin(self):
         if self.isEmpty():
