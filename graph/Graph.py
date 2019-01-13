@@ -4,8 +4,9 @@ from dictionary.trees.treeArrayList import TALNode as TreeNode
 from dictionary.trees.treeArrayList import TreeArrayList as Tree
 from datastruct.Queue import CodaArrayList_deque as Queue
 from datastruct.Stack import PilaArrayList as Stack
-from codepriorita.PQ_Dheap import PQ_DHeap as pc
-
+from codepriorita.PQ_Dheap import PQ_DHeap as p1
+from codepriorita.PQbinaryHeap import PQbinaryHeap as p2
+from codepriorita.PQbinomialHeap import PQbinomialHeap as p3
 class Node:
     """
     The graph basic element: node.
@@ -110,6 +111,7 @@ class GraphBase(ABC):
         self.nodes = {}  # dictionary {nodeId: node}
         self.edges = {}  # dictionary {}
         self.nextId = 0  # the next node ID to be assigned
+        self.edgeId = 0
 
     def isEmpty(self):
         """
@@ -125,15 +127,13 @@ class GraphBase(ABC):
         """
         return len(self.nodes)
 
-    @abstractmethod
     def numEdges(self):
         """
         Return the number of edges.
         :return: the number of edges.
         """
-        ...
+        return len(self.nodes)
 
-    @abstractmethod
     def addNode(self, elem):
         """
         Add a new node with the specified value.
@@ -142,10 +142,9 @@ class GraphBase(ABC):
         """
         newNode = Node(self.nextId, elem)
         self.nextId += 1
-        nodes[nextId] = elem
+        self.nodes[self.nextId] = elem
         return newNode
 
-    @abstractmethod
     def deleteNode(self, nodeId):
         """
         Remove the specified node.
@@ -153,27 +152,25 @@ class GraphBase(ABC):
         :return: void.
         """
         self.nextId -= 1
-        deleteEdge
-        del nodes[nodeId]
+        for el in self.edges:
+            if isAdj(el.nodeId,nodeId):
+             del self.nodes[nodeId]
 
-    @abstractmethod
     def getNode(self, id):
         """
         Return the node, if exists.
         :param id: the node ID (integer).
         :return: the node, if exists; None, otherwise.
         """
-        return nodes[nodeId]
+        return self.nodes[self.nodeId]
 
-    @abstractmethod
     def getNodes(self):
         """
         Return the list of nodes.
         :return: the list of nodes.
         """
-        return nodes
+        return self.nodes
 
-    @abstractmethod
     def insertEdge(self, tail, head, weight=None):
         """
         Add a new edge.
@@ -183,8 +180,10 @@ class GraphBase(ABC):
         :return: the created edge, if created; None, otherwise.
         """
         newEdge=Edge(tail, head, weight)
+        self.edgeId += 1
+        self.edges[self.edgeId]=newEdge
+        return newEdge
 
-    @abstractmethod
     def deleteEdge(self, tail, head):
         """
         Remove the specified edge.
@@ -192,7 +191,12 @@ class GraphBase(ABC):
         :param head: the head node ID (integer).
         :return: void.
         """
-        ...
+        self.edgeId += 1
+        i=0
+        for el in self.edges:
+         if el.tail==tail and el.head==head:
+          del self.edges[i]
+         i=i+1
 
     def getEdge(self, tail, head):
         """
@@ -201,16 +205,20 @@ class GraphBase(ABC):
         :param head: the head node ID (integer).
         :return: the edge, if exists; None, otherwise.
         """
-        ...
+        for i in range(1, len(self.edges)):
+            if self.edges[i].tail == tail and self.edges[i].head == head:
+                print(self.edges[i])
+                return self.edges[i]
+            else:
+                return False
 
     def getEdges(self):
         """
         Return the list of edges.
         :return: the list of edges.
         """
-        ...
+        return self.edges
 
-    @abstractmethod
     def isAdj(self, tail, head):
         """
         Checks if two nodes ar adjacent.
@@ -219,10 +227,11 @@ class GraphBase(ABC):
         :return: True, if the two nodes are adjacent; False, otherwise.
         """
         # Note: this method only checks if tail and head exist
-        ...
+        for i in range(1, len(self.edges)):
+            if self.edges[i].tail==tail and self.edges[i].head==head:
+                return True
+        return False
 
-
-    @abstractmethod
     def getAdj(self, nodeId):
         """
         Return all nodes adjacent to the one specified.
@@ -230,17 +239,25 @@ class GraphBase(ABC):
         :return: the list of nodes adjacent to the one specified.
         :rtype: list
         """
-        ...
+        l=[]
+        for i in range(1,len(self.nodes)):
+            if self.isAdj(self.nodes[i], nodeId):
+             l.append(self.nodes[i])
+        return l
 
-    @abstractmethod
     def deg(self, nodeId):
         """
         Return the node degree.
         :param nodeId: the node id.
         :return: the node degree.
         """
-        ...
-
+        return len(getAdj(nodeId))
+    def nodeWeight(self,n1,n2):
+     e=self.getEdge(n1, n2)
+     if e is not False:
+         return e.weight
+     else:
+         return
     def genericSearch(self, rootId):
         """
         Execute a generic search in the graph starting from the specified node.
@@ -266,33 +283,91 @@ class GraphBase(ABC):
                     vertexSet.add(newTreeNode)
                     markedNodes.add(nodeIndex)  # mark as explored
         return tree
-    def visitaInPriorita(self, rootId):
+    def visitaInPriorita1(self, rootId):
         """
-        Execute a generic search in the graph starting from the specified node.
+        Execute a priority search in the graph starting from the specified node.
         :param rootId: the root node ID (integer).
         :return: the generic exploration tree.
         """
 
-        p=pc()
         if rootId not in self.nodes:
             return None
-
         treeNode = TreeNode(rootId)
         tree = Tree(treeNode)
-        vertexSet = {treeNode}  # nodes to explore
         markedNodes = {rootId}  # nodes already explored
-
-        while len(vertexSet) > 0:  # while there are nodes to explore ...
-            treeNode = vertexSet.pop()  # get an unexplored node
+        cod = p1(3)
+        nodeIndex=rootId
+        cod.insert(nodeIndex, 0)
+        while cod.heap:  # while there are nodes to explore ...
+            treeNode = TreeNode(cod.maxSon(0))  # get an unexplored node
             adjacentNodes = self.getAdj(treeNode.info)
             for nodeIndex in adjacentNodes:
                 if nodeIndex not in markedNodes:  # if not explored ...
-                    newTreeNode = TreeNode(nodeIndex)
-                    newTreeNode.father = treeNode
-                    treeNode.sons.append(newTreeNode)
-                    vertexSet.add(newTreeNode)
-                    markedNodes.add(nodeIndex)  # mark as explored
+                  newTreeNode = TreeNode(nodeIndex)
+                  newTreeNode.father = treeNode
+                  treeNode.sons.append(newTreeNode)
+                  cod.insert(nodeIndex, self.nodeWeight(treeNode,self.nodes[nodeIndex]))
+                markedNodes.add(nodeIndex)
         return tree
+    def visitaInPriorita2(self, rootId):
+        """
+        Execute a priority search in the graph starting from the specified node.
+        :param rootId: the root node ID (integer).
+        :return: the generic exploration tree.
+        """
+
+        if rootId not in self.nodes:
+            return None
+        treeNode = TreeNode(rootId)
+        tree = Tree(treeNode)
+        markedNodes = {rootId}  # nodes already explored
+        cod = p2()
+        nodeIndex=rootId
+        cod.insert(nodeIndex, 0)
+
+        while cod.heap:  # while there are nodes to explore ...
+            treeNode = TreeNode(cod.maxSon(0))  # get an unexplored node
+            adjacentNodes = self.getAdj(treeNode.info)
+            for nodeIndex in adjacentNodes:
+                if nodeIndex not in markedNodes:  # if not explored ...
+                  newTreeNode = TreeNode(nodeIndex)
+                  newTreeNode.father = treeNode
+                  treeNode.sons.append(newTreeNode)
+                  cod.insert(nodeIndex, self.nodeWeight(treeNode, self.nodes[nodeIndex]))
+                markedNodes.add(nodeIndex)
+
+        return tree
+    def visitaInPriorita3(self, rootId):
+        """
+        Execute a priority search in the graph starting from the specified node.
+        :param rootId: the root node ID (integer).
+        :return: the generic exploration tree.
+        """
+
+        if rootId not in self.nodes:
+            return None
+        treeNode = TreeNode(rootId)
+        tree = Tree(treeNode)
+        markedNodes = {rootId}  # nodes already explored
+        cod = p3()
+        nodeIndex=rootId
+        cod.insert(nodeIndex, 0)
+
+
+        while cod.heap:  # while there are nodes to explore ...
+            treeNode = TreeNode(cod.findMax())  # get an unexplored node
+            adjacentNodes = self.getAdj(treeNode.info)
+            for nodeIndex in adjacentNodes:
+                if nodeIndex not in markedNodes:  # if not explored ...
+                  newTreeNode = TreeNode(nodeIndex)
+                  newTreeNode.father = treeNode
+                  treeNode.sons.append(newTreeNode)
+                  cod.insert(nodeIndex, self.nodeWeight(treeNode, self.nodes[nodeIndex]))
+                markedNodes.add(nodeIndex)
+
+        return tree
+
+
 
     def bfs(self, rootId):
         """
@@ -356,12 +431,12 @@ class GraphBase(ABC):
 
         return dfs_nodes
 
-    @abstractmethod
     def print(self):
         """
         Print the graph.
         :return: void.
         """
+        return
 
 
 if __name__ == "__main__":
