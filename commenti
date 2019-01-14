@@ -1,8 +1,0 @@
-commenti:
-
-Dal test effettuato in "Testing.py" si può osservare che l'algoritmo meno performante utilizzato all'interno delle funzioni visitaInPriorita è il binomialHeap.
-Tra i restanti due algoritmi si nota come nel test effettuato con istanze di input piccole (numero di nodi e archi) risulta più veloce il Dheap, ma al crescere della dimensione è il Binary a risultare più veloce (vedi Test con numero di archi uguale a quello dei vertici con binomial escluso )
-
-Da aggiungere a Scelte implementative:
-
-Per generare il grafo è stata implementata la funzione "genGraph(numVertici, numArchi,inputType)" che permette attraverso le funzioni preesistenti "insertNode()" e "insertEdge()" di generare un grafo.
